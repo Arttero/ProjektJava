@@ -1,6 +1,6 @@
 package Gui.AdminGui;
 
-import Gui.GuiCreator;
+import resources.TworzenieGUI;
 import Gui.logowanie;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ public class PanelAdministratora extends JFrame {
 
 
 
-    GuiCreator guiCreator = new GuiCreator();
+    TworzenieGUI tworzenieGUI = new TworzenieGUI();
 
     public PanelAdministratora() {
         super("Panel Administratora");
@@ -35,19 +35,19 @@ public class PanelAdministratora extends JFrame {
 
 
     private void panelPrzyciskow(){
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 0, 15));
-        PanelAdministratora.add(buttonPanel,BorderLayout.WEST);
-        budynekButton = guiCreator.createIconButton("Budynek", new Color(37, 37, 37),new Color(255,255,255), "/figures/icons8-building2-100.png");
-        pokojButton = guiCreator.createIconButton("Pokoj", new Color(2, 80, 253),new Color(255,255,255), "/figures/icons8-building-100.png");
-        testButton = guiCreator.createIconButton("Test", new Color(253, 236, 7),new Color(255,255,255), "/figures/icons8-building-100.png");
-        wylogujButton = guiCreator.createButton("Wyloguj", new Color(211, 38, 38), new Color(255,255,255));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 15, 0));
+        PanelAdministratora.add(buttonPanel,BorderLayout.AFTER_LAST_LINE);
+        budynekButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Budynki", new Color(37, 37, 37),new Color(255,255,255), "/resources/figures/icons8-building2-100.png");
+        pokojButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Pokoje", new Color(2, 80, 253),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
+        testButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Test", new Color(253, 236, 7),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
+        wylogujButton = tworzenieGUI.tworzeniePrzycisku("Wyloguj", new Color(211, 38, 38), new Color(255,255,255));
 
         buttonPanel.add(budynekButton);
         buttonPanel.add(pokojButton);
         buttonPanel.add(testButton);
         buttonPanel.add(wylogujButton);
 
-        //panel testowy
+        //Panel testowy
         JPanel tablePanel = new JPanel(new GridLayout(5, 1, 15, 0));
         tablePanel.setBackground(Color.WHITE);
         tablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
