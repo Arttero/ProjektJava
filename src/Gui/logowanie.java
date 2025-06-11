@@ -1,3 +1,8 @@
+package Gui;
+
+import Gui.AdminGui.PanelAdministratora;
+import dao.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +25,8 @@ public logowanie() {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     int width = 400, height = 300;
     this.setSize(width, height);
+    this.setVisible(true);
+    this.setLocationRelativeTo(null);
 
 
     zalogujButton.addActionListener(new ActionListener() {
@@ -42,6 +49,7 @@ public logowanie() {
                     JOptionPane.showMessageDialog(null,
                             "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
                     setVisible(false);
+                    PanelAdministratora panelAdministratora = new PanelAdministratora();
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,
@@ -52,14 +60,6 @@ public logowanie() {
                 PassTextField.setText("");
 
             }
-        }
-    });
-    rejestracjaButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setVisible(false);
-            rejestracja rejestracja = new rejestracja();
-            rejestracja.setVisible(true);
         }
     });
 }
