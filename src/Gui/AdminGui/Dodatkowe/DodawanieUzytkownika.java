@@ -1,4 +1,4 @@
-package Gui.AdminGui;
+package Gui.AdminGui.Dodatkowe;
 
 public class DodawanieUzytkownika {
     private String nazwaUzytkownika;

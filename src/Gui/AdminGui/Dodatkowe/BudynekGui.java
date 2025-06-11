@@ -1,5 +1,7 @@
-package Gui.AdminGui;
+package Gui.AdminGui.Dodatkowe;
 
+import Gui.AdminGui.PanelAdministratora;
+import dao.BudynekDAO;
 import resources.TworzenieGUI;
 
 import javax.swing.*;
@@ -7,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.RowSorter;
@@ -29,11 +32,12 @@ public class BudynekGui extends JFrame {
 
 
     //nazwy kolumn do tabeli i filtrowania
-    private String[] nazwyKolumn = {"ID", "Nazwa Budynku", "Adres Budynku","Typ Budynku"};
+    private String[] kolumny = {"ID", "Nazwa Budynku", "Adres Budynku","Typ Budynku"};
     TworzenieGUI tworzenieGUI = new TworzenieGUI();
+    BudynekDAO dao = new BudynekDAO();
 
     public BudynekGui() {
-        super("Budynek");
+        super("Lista budynków");
         budynekGui = new JPanel(new BorderLayout(5,5));
         budynekGui.setBackground(Color.WHITE);
         budynekGui.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -66,7 +70,7 @@ public class BudynekGui extends JFrame {
         panelGorny.add(comboSortowanie);
 
         //Wyszukiwanie
-        kolumnaFiltrowanie = new JComboBox<>(nazwyKolumn);
+        kolumnaFiltrowanie = new JComboBox<>(kolumny);
         //Pole wyszukiwania
         poleWyszukiwania = new JTextField(20); //jak puste to nie da się kliknąć
         poleWyszukiwania.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -99,15 +103,15 @@ public class BudynekGui extends JFrame {
         panelSrodkowy.setBorder(BorderFactory.createLineBorder(Color.black));
         panelSrodkowy.setBackground(Color.WHITE);
 
-        Object[][] data = {
-                {1, "Budynek A", "ul. Test 1","Biurowiec"},
-                {2, "Budynek B", "ul. Test 2","Budynek mieszkalny"}
-        };
-
-        model = new DefaultTableModel(data, nazwyKolumn){
+        model = new DefaultTableModel(kolumny,0){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; //dzięki temu żadna komórka nie jest możliwa do edycji w tabeli
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return column == 0 ? Integer.class : String.class;
             }
         };
 
@@ -118,8 +122,9 @@ public class BudynekGui extends JFrame {
         //Opcja scrollowania
         JScrollPane scrollPane = new JScrollPane(tabela);
         panelSrodkowy.add(scrollPane,BorderLayout.CENTER);
-
         budynekGui.add(panelSrodkowy,BorderLayout.CENTER);
+
+        zaladujDaneZTabeli();
     }
 
     private void panelDolny() {
@@ -177,27 +182,27 @@ public class BudynekGui extends JFrame {
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Nazwa (A-Z)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Nazwa (Z-A)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(1, SortOrder.DESCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Adres (A-Z)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Adres (Z-A)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(2, SortOrder.DESCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Typ (A-Z)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             case "Typ (Z-A)":
-                sortowanieKluczy.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+                sortowanieKluczy.add(new RowSorter.SortKey(3, SortOrder.DESCENDING));
                 System.out.println("Sortowanie poprzez: " + wybrane);
                 break;
             default:
@@ -226,7 +231,6 @@ public class BudynekGui extends JFrame {
         JTextField poleAdres = new JTextField();
         JTextField poleTyp = new JTextField();
 
-        //TODO: odczytanie z bazy danych
         Object[] pola = {
                 "Nazwa budynku:", poleNazwa,
                 "Adres budynku:", poleAdres,
@@ -240,12 +244,13 @@ public class BudynekGui extends JFrame {
                 String adres = poleAdres.getText().trim();
                 String typ = poleTyp.getText().trim();
 
-                //TODO: dodanie informacji do bazy danych
+                dao.dodajBudynek(nazwa, adres, typ);
+                zaladujDaneZTabeli();
 
                 System.out.println("Nazwa:"+ nazwa);
                 System.out.println("Adres:"+ adres);
                 System.out.println("Typ:"+ typ);
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this,"Wystąpił błąd: " + e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -280,14 +285,46 @@ public class BudynekGui extends JFrame {
                 model.setValueAt(poleNazwa.getText(), wybranyWiersz, 1);
                 model.setValueAt(poleAdres.getText(), wybranyWiersz, 2);
                 model.setValueAt(poleTyp.getText(), wybranyWiersz, 3);
-                //TODO: aktualizacja bazy danych
-            } catch (Exception e) {
+
+                dao.aktualizujBudynek((Integer) id,poleNazwa.getText(),poleAdres.getText(),poleTyp.getText());
+                zaladujDaneZTabeli();
+
+            } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this,"Wystąpił błąd: "+ e.getMessage(),"Błąd", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private void usunBudynek() {
+        int wybranyWiersz = tabela.getSelectedRow();
+        if (wybranyWiersz == -1) {
+            JOptionPane.showMessageDialog(this, "Wybierz budynek do usunięcia.","Brak wyboru", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        wybranyWiersz = tabela.convertRowIndexToModel(wybranyWiersz);
 
+        int wynik = JOptionPane.showConfirmDialog(this, "Czy napewno chcesz usunąć ten budynek?", "Potwierdzenie", JOptionPane.OK_CANCEL_OPTION);
+        if (wynik == JOptionPane.OK_OPTION) {
+            try {
+                int id = (int) model.getValueAt(wybranyWiersz, 0);
+
+                dao.usunBudynek(id);
+                model.removeRow(wybranyWiersz);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Wystąpił błąd: "+ e.getMessage(),"Błąd", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void zaladujDaneZTabeli() {
+        model.setRowCount(0); //usunięcie starych danych
+        try{
+            for (Object[] row : dao.pobierzWszystkieBudynki()) {
+                model.addRow(row);
+            }
+        } catch (SQLException e){
+            JOptionPane.showMessageDialog(this, "Błąd podczas ładowania danych:", "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

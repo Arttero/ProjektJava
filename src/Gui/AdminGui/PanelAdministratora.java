@@ -1,5 +1,9 @@
 package Gui.AdminGui;
 
+import Gui.AdminGui.Dodatkowe.BudynekGui;
+import Gui.AdminGui.Dodatkowe.OplatyGui;
+import Gui.AdminGui.Dodatkowe.PomieszczeniaGui;
+import Gui.AdminGui.Dodatkowe.ZgloszeniaGui;
 import resources.TworzenieGUI;
 import Gui.logowanie;
 
@@ -10,8 +14,9 @@ public class PanelAdministratora extends JFrame {
     private JPanel PanelAdministratora;
     private JButton budynekButton;
     private JButton pokojButton;
-    private JButton testButton;
     private JButton wylogujButton;
+    private JButton zgloszeniaButton;
+    private JButton oplatyButton;
 
 
 
@@ -35,16 +40,18 @@ public class PanelAdministratora extends JFrame {
 
 
     private void panelPrzyciskow(){
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 15, 0));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 5, 15, 0));
         PanelAdministratora.add(buttonPanel,BorderLayout.AFTER_LAST_LINE);
         budynekButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Budynki", new Color(37, 37, 37),new Color(255,255,255), "/resources/figures/icons8-building2-100.png");
-        pokojButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Pokoje", new Color(2, 80, 253),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
-        testButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Test", new Color(253, 236, 7),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
+        pokojButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Pomieszczenia", new Color(2, 80, 253),new Color(255,255,255), "/resources/figures/icons8-room-100.png");
+        zgloszeniaButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Zgłoszenia", new Color(253, 236, 7),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
+        oplatyButton = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Opłaty lokatorów", new Color(253, 236, 7),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
         wylogujButton = tworzenieGUI.tworzeniePrzycisku("Wyloguj", new Color(211, 38, 38), new Color(255,255,255));
 
         buttonPanel.add(budynekButton);
         buttonPanel.add(pokojButton);
-        buttonPanel.add(testButton);
+        buttonPanel.add(zgloszeniaButton);
+        buttonPanel.add(oplatyButton);
         buttonPanel.add(wylogujButton);
 
         //Panel testowy
@@ -69,6 +76,21 @@ public class PanelAdministratora extends JFrame {
             dispose();
             System.out.println("Przechodzę do gui budynku");
             new BudynekGui();
+        });
+        pokojButton.addActionListener( e -> {
+            dispose();
+            System.out.println("Przechodzę do gui pomieszczeń");
+            new PomieszczeniaGui();
+        });
+        zgloszeniaButton.addActionListener( e -> {
+            dispose();
+            System.out.println("Przechodzę do gui zgloszeń");
+            new ZgloszeniaGui();
+        });
+        oplatyButton.addActionListener( e -> {
+            dispose();
+            System.out.println("Przechodzę do gui opłat");
+            new OplatyGui();
         });
     }
 }
