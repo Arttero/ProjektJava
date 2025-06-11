@@ -1,4 +1,4 @@
-package Gui;
+package Gui.UserGui;
 
 public class PanelUzytkownika {
 }
