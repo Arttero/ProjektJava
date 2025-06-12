@@ -13,8 +13,8 @@ public class DatabaseConnection {
     }
     public static boolean checkLogin(String login, String password) {
         try {
-            UserDAO userDAO = new UserDAO();
-            return userDAO.autoryzacjaUzytkownika(login, password);
+            WeryfikacjaDAO weryfikacjaDAO = new WeryfikacjaDAO();
+            return weryfikacjaDAO.autoryzacjaUzytkownika(login, password);
         } catch (SQLException e) {
             System.err.println("Błąd podczas logowania: " + e.getMessage());
             return false;

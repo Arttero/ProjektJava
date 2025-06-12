@@ -1,22 +1,11 @@
 package dao;
 
+import javax.swing.*;
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.Base64;
 
-public class UserDAO {
-    public boolean autoryzacjaUzytkownika(String login, String password) throws SQLException {
-        String sql = "SELECT * FROM dane_logowania WHERE login=? AND password=?";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {//zapytanie sql'owe
-            stmt.setString(1, login);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();//zwroci true jezeli bedzie dopasowanie
-        }
-
-    }
-
+public class AdminDAO {
     public String generowanieLosowegoHasla() {
         SecureRandom random = new SecureRandom();
         byte[] randomBytes = new byte[8]; //mniej więcej 11 znaków
@@ -59,7 +48,19 @@ public class UserDAO {
             stmtPersonal.executeUpdate();
 
             conn.commit();
-            System.out.println("Rejestracja udana! Wygenerowane hasło: " + password);
+            String komunikat = "Login: " + login + "\nHasło: " + password;
+            JTextArea textArea = new JTextArea(komunikat);
+            textArea.setEditable(false);
+            textArea.setBackground(null);
+            textArea.setBorder(null);
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    new JScrollPane(textArea),
+                    "Dane dostępowe",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
         }catch (Exception ex) {
             System.out.println("Wystąpił błąd podczas rejestrowania: " + ex.getMessage());
         }

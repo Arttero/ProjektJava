@@ -1,7 +1,9 @@
 package Gui;
 
 import Gui.AdminGui.PanelAdministratora;
+import Gui.UserGui.PanelUzytkownika;
 import dao.DatabaseConnection;
+import dao.WeryfikacjaDAO;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -36,20 +38,30 @@ public logowanie() {
             if (LoginTextField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
                         "Wprowadź login!", "Błąd", JOptionPane.WARNING_MESSAGE);
+
             } else if (new String(PassTextField.getPassword()).isEmpty()){
                 JOptionPane.showMessageDialog(null,
                         "Wprowadź hasło!", "Błąd", JOptionPane.WARNING_MESSAGE);
             }
+
             //przypisanie danych pod zmienne
             login = LoginTextField.getText();
             password = new String(PassTextField.getPassword());
 
             try {
                 if (DatabaseConnection.checkLogin(login, password)) {
-                    JOptionPane.showMessageDialog(null,
-                            "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+
+                    WeryfikacjaDAO weryfikacjaDAO = new WeryfikacjaDAO();
+                    String rola = weryfikacjaDAO.pobierzRole(login, password);
                     setVisible(false);
-                    PanelAdministratora panelAdministratora = new PanelAdministratora();
+                    if ("admin".equalsIgnoreCase(rola)) {
+                        new PanelAdministratora();
+                    } else if ("user".equalsIgnoreCase(rola)) {
+                        new PanelUzytkownika();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Błędny login lub hasło!");
+                    }
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,

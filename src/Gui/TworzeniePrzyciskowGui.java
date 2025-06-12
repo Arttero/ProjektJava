@@ -1,11 +1,10 @@
-package resources;
+package Gui;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.util.Objects;
 
-public class TworzenieGUI {
+public class TworzeniePrzyciskowGui {
     public JButton tworzeniePrzycisku(String tekst, Color kolor, Color kolorTekstu) {
         JButton przycisk = new JButton(tekst);
         przycisk.setFocusPainted(false);

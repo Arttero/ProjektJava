@@ -1,10 +1,10 @@
-import Gui.AdminGui.*;
+import Gui.UserGui.PanelUzytkownika;
+import Gui.logowanie;
 
 public class Main {
     public static void main(String[] args) {
-        //logowanie logowanie = new logowanie();
-        new PanelAdministratora();
-        //new BudynekGui();
+        //new logowanie();
+        new PanelUzytkownika();
         System.out.println("Start");
     }
 }

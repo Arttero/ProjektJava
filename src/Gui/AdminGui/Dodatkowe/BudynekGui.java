@@ -2,7 +2,7 @@ package Gui.AdminGui.Dodatkowe;
 
 import Gui.AdminGui.PanelAdministratora;
 import dao.BudynekDAO;
-import resources.TworzenieGUI;
+import Gui.TworzeniePrzyciskowGui;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -33,14 +33,14 @@ public class BudynekGui extends JFrame {
 
     //nazwy kolumn do tabeli i filtrowania
     private String[] kolumny = {"ID", "Nazwa Budynku", "Adres Budynku","Typ Budynku"};
-    TworzenieGUI tworzenieGUI = new TworzenieGUI();
+    TworzeniePrzyciskowGui tworzenieGUI = new TworzeniePrzyciskowGui();
     BudynekDAO dao = new BudynekDAO();
 
     public BudynekGui() {
         super("Lista budynków");
-        budynekGui = new JPanel(new BorderLayout(5,5));
-        budynekGui.setBackground(Color.WHITE);
-        budynekGui.setBorder(BorderFactory.createLineBorder(Color.black));
+        budynekGui = new JPanel(new BorderLayout(10,10));
+        budynekGui.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        budynekGui.setBackground(Color.LIGHT_GRAY);
 
         panelGorny();
         panelSrodkowy();
@@ -56,7 +56,7 @@ public class BudynekGui extends JFrame {
 
     private void panelGorny() {
         panelGorny = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelGorny.setBackground(Color.WHITE);
+        panelGorny.setBackground(Color.LIGHT_GRAY);
 
         //Sortowanie
         String[] opcjeSortowania = {
@@ -130,10 +130,11 @@ public class BudynekGui extends JFrame {
     private void panelDolny() {
         JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 15, 0));
         budynekGui.add(buttonPanel,BorderLayout.AFTER_LAST_LINE);
-        dodajBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Dodaj budynek", new Color(37, 37, 37),new Color(255,255,255), "/resources/figures/icons8-building2-100.png");
-        edytujBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Edytuj budynek", new Color(2, 80, 253),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
-        usunBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Usuń budynek", new Color(253, 236, 7),new Color(255,255,255), "/resources/figures/icons8-building-100.png");
-        powrot = tworzenieGUI.tworzeniePrzycisku("Powrót", new Color(1, 255, 31 ), new Color(255,255,255));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        dodajBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Dodaj budynek", new Color(5, 189, 13),new Color(255,255,255), "/resources/icons/icons8-add-100.png");
+        edytujBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Edytuj budynek", new Color(223, 163, 57),new Color(255,255,255), "/resources/icons/icons8-edit-100.png");
+        usunBudynek = tworzenieGUI.tworzeniePrzyciskuZeZdjeciem("Usuń budynek", new Color(204, 61, 61),new Color(255,255,255), "/resources/icons/icons8-delete-100.png");
+        powrot = tworzenieGUI.tworzeniePrzycisku("Powrót", new Color(129, 129, 129), new Color(255,255,255));
 
         buttonPanel.add(dodajBudynek);
         buttonPanel.add(edytujBudynek);
@@ -243,13 +244,13 @@ public class BudynekGui extends JFrame {
                 String nazwa = poleNazwa.getText().trim();
                 String adres = poleAdres.getText().trim();
                 String typ = poleTyp.getText().trim();
-
+                if (nazwa.isEmpty() || adres.isEmpty() || typ.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Wypełnij wszystkie wymagane pola!", "Brak danych", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 dao.dodajBudynek(nazwa, adres, typ);
                 zaladujDaneZTabeli();
 
-                System.out.println("Nazwa:"+ nazwa);
-                System.out.println("Adres:"+ adres);
-                System.out.println("Typ:"+ typ);
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this,"Wystąpił błąd: " + e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
             }
@@ -285,7 +286,10 @@ public class BudynekGui extends JFrame {
                 model.setValueAt(poleNazwa.getText(), wybranyWiersz, 1);
                 model.setValueAt(poleAdres.getText(), wybranyWiersz, 2);
                 model.setValueAt(poleTyp.getText(), wybranyWiersz, 3);
-
+                if(nazwa.isEmpty() || adres.isEmpty() || typ.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Wypełnij wszystkie wymagane pola!", "Brak danych", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 dao.aktualizujBudynek((Integer) id,poleNazwa.getText(),poleAdres.getText(),poleTyp.getText());
                 zaladujDaneZTabeli();
 
