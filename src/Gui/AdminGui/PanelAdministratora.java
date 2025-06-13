@@ -1,13 +1,13 @@
 package Gui.AdminGui;
 
 import Gui.AdminGui.Dodatkowe.BudynekGui;
-import Gui.AdminGui.Dodatkowe.OplatyGui;
+import Gui.AdminGui.Dodatkowe.WystawRachunekGui;
 import Gui.AdminGui.Dodatkowe.PomieszczeniaGui;
-import Gui.AdminGui.Dodatkowe.ZgloszeniaGui;
+import Gui.AdminGui.Dodatkowe.ListaLokatorowGui;
 import Gui.JTextFieldZPodpowiedzia;
 import Gui.TworzeniePrzyciskowGui;
 import Gui.logowanie;
-import dao.AdminDAO;
+import dao.AdministratorDAO.AdminDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +36,9 @@ public class PanelAdministratora extends JFrame {
         panelZDodawaniemUzytkownika();
         panelDolny();
         ustawienieListenerow();
+
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icons/icons8-home-64.png"));
+        setIconImage(icon);
 
         this.setContentPane(PanelAdministratora);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,6 +74,7 @@ public class PanelAdministratora extends JFrame {
     }
 
     private void panelZDodawaniemUzytkownika() {
+        //panel służący do dodawania użytkownika
         JPanel panel = new JPanel(new GridLayout(0,2,10,10));
         JTextField loginField = new JTextFieldZPodpowiedzia("Login");
         JTextField imieField = new JTextFieldZPodpowiedzia("Imię");
@@ -80,7 +84,6 @@ public class PanelAdministratora extends JFrame {
         JTextField telefonField = new JTextFieldZPodpowiedzia("Numer telefonu");
         JTextField emailField = new JTextFieldZPodpowiedzia("Adres email");
 
-        //wylogujButton = tworzenieGUI.tworzeniePrzycisku("Wyloguj", new Color(211, 38, 38), new Color(255,255,255));
         JButton dodajButton = tworzenieGUI.tworzeniePrzycisku("Dodaj użytkownika", new Color(2, 2, 2), new Color(255, 255, 255));
 
         panel.add(new JLabel("Login:"));
@@ -117,9 +120,9 @@ public class PanelAdministratora extends JFrame {
                     String login = loginField.getText();
                     String imie = imieField.getText();
                     String nazwisko = nazwiskoField.getText();
-                    int pesel = Integer.parseInt(peselField.getText());
+                    String pesel = peselField.getText();
                     String dataUrodzenia = dataUrodzeniaField.getText();
-                    int telefon = Integer.parseInt(telefonField.getText());
+                    String telefon = telefonField.getText();
                     String email = emailField.getText();
 
                     adminDAO.dodanieUzytkownika(login, imie, nazwisko, pesel, dataUrodzenia, telefon, email);
@@ -170,13 +173,13 @@ public class PanelAdministratora extends JFrame {
         });
         ListaLokatorowButton.addActionListener(e -> {
             dispose();
-            System.out.println("Przechodzę do gui zgloszeń");
-            new ZgloszeniaGui();
+            System.out.println("Przechodzę do listy lokatorów");
+            new ListaLokatorowGui();
         });
         oplatyButton.addActionListener( e -> {
             dispose();
             System.out.println("Przechodzę do gui opłat");
-            new OplatyGui();
+            new WystawRachunekGui();
         });
     }
 }

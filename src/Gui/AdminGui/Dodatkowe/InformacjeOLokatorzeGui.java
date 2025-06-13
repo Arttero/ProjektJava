@@ -1,6 +1,6 @@
 package Gui.AdminGui.Dodatkowe;
 
-import dao.LokatorDAO;
+import dao.AdministratorDAO.LokatorDAO;
 import resources.Osoba;
 
 import javax.swing.*;
@@ -11,8 +11,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
-public class LokatorGui extends JFrame {
+public class InformacjeOLokatorzeGui extends JFrame {
     public void zarzadzajLokatorem(int idPokoju) {
+        //możliwość sprawdzenia/edytowania/dodania lokatora
         try {
             LokatorDAO lokatorDAO = new LokatorDAO();
             Osoba lokator = lokatorDAO.znajdzLokatoraDlaPokoju(idPokoju);
@@ -44,18 +45,13 @@ public class LokatorGui extends JFrame {
         }
     }
 
+    //dodanie lokatora
     private void DodajLokatora(int idPokoju) {
-        JTextField imieField = new JTextField();
-        JTextField nazwiskoField = new JTextField();
         JTextField peselField = new JTextField();
         JTextField ostatniaZaplataField = new JTextField();
         JTextField najblizszaZaplataField = new JTextField();
 
-        JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
-        panel.add(new JLabel("Imię:"));
-        panel.add(imieField);
-        panel.add(new JLabel("Nazwisko:"));
-        panel.add(nazwiskoField);
+        JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
         panel.add(new JLabel("PESEL:"));
         panel.add(peselField);
         panel.add(new JLabel("Ostatnia zapłata (RRRR-MM-DD):"));
@@ -66,14 +62,12 @@ public class LokatorGui extends JFrame {
         int wynik = JOptionPane.showConfirmDialog(this, panel, "Dodaj lokatora", JOptionPane.OK_CANCEL_OPTION);
         if (wynik == JOptionPane.OK_OPTION) {
             try {
-                String imie = imieField.getText().trim();
-                String nazwisko = nazwiskoField.getText().trim();
                 String pesel = peselField.getText().trim();
                 LocalDate ostatniaZaplata = LocalDate.parse(ostatniaZaplataField.getText().trim());
                 LocalDate najblizszaZaplata = LocalDate.parse(najblizszaZaplataField.getText().trim());
 
                 LokatorDAO dao = new LokatorDAO();
-                dao.dodajLokatora(imie, nazwisko, pesel, najblizszaZaplata, ostatniaZaplata, idPokoju);
+                dao.dodajLokatora(pesel, najblizszaZaplata, ostatniaZaplata, idPokoju);
                 JOptionPane.showMessageDialog(this, "Dodano lokatora.");
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Błąd bazy danych: " + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -82,9 +76,8 @@ public class LokatorGui extends JFrame {
             }
         }
     }
+    //edycja lokatora
     private void EdytujLokatora(Osoba lokator) {
-        JTextField imieField = new JTextField(lokator.getImie());
-        JTextField nazwiskoField = new JTextField(lokator.getNazwisko());
         JTextField peselField = new JTextField(lokator.getPesel());
         JTextField ostatniaZaplataField = new JTextField(lokator.getOstatniaZaplata().toString());
         JTextField najblizszaZaplataField = new JTextField(lokator.getNajblizszaZaplata().toString());
@@ -98,10 +91,6 @@ public class LokatorGui extends JFrame {
 
 
         JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
-        panel.add(new JLabel("Imię:"));
-        panel.add(imieField);
-        panel.add(new JLabel("Nazwisko:"));
-        panel.add(nazwiskoField);
         panel.add(new JLabel("PESEL:"));
         panel.add(peselField);
         panel.add(new JLabel("Ostatnia zapłata (RRRR-MM-DD):"));
@@ -112,8 +101,6 @@ public class LokatorGui extends JFrame {
         int wynik = JOptionPane.showConfirmDialog(this, panel, "Edytuj lokatora", JOptionPane.OK_CANCEL_OPTION);
         if (wynik == JOptionPane.OK_OPTION) {
             try {
-                lokator.setImie(imieField.getText().trim());
-                lokator.setNazwisko(nazwiskoField.getText().trim());
                 lokator.setPesel(peselField.getText().trim());
                 lokator.setOstatniaZaplata(ostatniaZaplata);
                 lokator.setNajblizszaZaplata(najblizszaZaplata);

@@ -1,7 +1,7 @@
 package Gui.AdminGui.Dodatkowe;
 
 import Gui.AdminGui.PanelAdministratora;
-import dao.PomieszczeniaDAO;
+import dao.AdministratorDAO.PomieszczeniaDAO;
 import Gui.TworzeniePrzyciskowGui;
 
 import javax.swing.*;
@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PomieszczeniaGui extends JFrame {
-    private JButton zaopatrzenieLokaluButton;
     private JPanel panelGlowny;
     private JPanel panelGorny;
     private JPanel panelSrodkowy;
-    private JPanel panelDolny;
     private JTable tabela;
     private JButton informacje;
     private JComboBox<String> comboSortowanie;
@@ -38,7 +36,7 @@ public class PomieszczeniaGui extends JFrame {
             "Cena czynszu","Cena zakupu"
     };
     PomieszczeniaDAO dao = new PomieszczeniaDAO();
-    LokatorGui lokatorGui = new LokatorGui();
+    InformacjeOLokatorzeGui lokatorGui = new InformacjeOLokatorzeGui();
 
 
     public PomieszczeniaGui() {
@@ -51,6 +49,9 @@ public class PomieszczeniaGui extends JFrame {
         panelDolny();
         ustawienieListenerow();
 
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icons/icons8-home-64.png"));
+        setIconImage(icon);
+
         this.setContentPane(panelGlowny);
         this.setTitle("Lista pomieszczeń");
         this.setSize(1280,960);
@@ -60,48 +61,77 @@ public class PomieszczeniaGui extends JFrame {
     }
 
     private void panelGorny() {
-        panelGorny = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelGorny.setBackground(Color.LIGHT_GRAY);
+        //panel główny
+        panelGorny = new JPanel(new BorderLayout(10, 10));
+        panelGorny.setBackground(Color.WHITE);
+        panelGorny.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        //id pokoju, budynek, adres, typ pomieszczenia(opcjonalnie), czy zajęte, cena zakpupu/ czynszu
+        //panel z ikoną i napisem
+        JPanel panelLewy = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelLewy.setBackground(Color.WHITE);
+
+        ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icons/icons8-room-100.png"));
+        Image zeskalowane = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+        JLabel zdjecieLabel = new JLabel(new ImageIcon(zeskalowane));
+        zdjecieLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        JLabel tekstLabel = new JLabel("LISTA POMIESZCZEŃ ");
+        tekstLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        tekstLabel.setForeground(Color.BLACK);
+        tekstLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+
+        panelLewy.add(zdjecieLabel);
+        panelLewy.add(tekstLabel);
+
+        //panel z wyszukiwaniem i sortowaniem
+        JPanel panelPrawy = new JPanel();
+        panelPrawy.setLayout(new BoxLayout(panelPrawy, BoxLayout.Y_AXIS));
+        panelPrawy.setBackground(Color.WHITE);
+        panelPrawy.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        //sortowanie
+        JPanel panelSortowanie = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelSortowanie.setBackground(Color.WHITE);
+
+        panelSortowanie.add(new JLabel("Sortowanie według:"));
         String[] opcjeSortowania = {
-                "ID (rosnąco)","ID (malejąco)","Budynek (A-Z)","Budynek (Z-A)","Adres (A-Z)","Adres (Z-A)",
-                "Typ (A-Z)","Typ (Z-A)","Czy zajęte (Nie)","Czy zajęte (Tak)","Cena czynszu (od najmniejszej)",
-                "Cena czynszu (od największej)","Cena zakupu (od największej)","Cena zakupu (od najmniejszej)"
+                "ID (rosnąco)", "ID (malejąco)",
+                "Nazwa Budynku (A-Z)", "Nazwa Budynku (Z-A)",
+                "Adres Budynku (A-Z)", "Adres Budynku (Z-A)",
+                "Typ Budynku (A-Z)", "Typ Budynku (Z-A)"
         };
         comboSortowanie = new JComboBox<>(opcjeSortowania);
         comboSortowanie.setSelectedIndex(0);
         comboSortowanie.addActionListener(e -> sortujTabele());
-        panelGorny.add(new JLabel("Sortowanie według:"));
-        panelGorny.add(comboSortowanie);
 
-        kolumnaFiltrowanie = new  JComboBox<>(kolumny);
-        //Pole wyszukiwania
-        poleWyszukiwania = new JTextField(20); //jak puste to nie da się kliknąć
+        panelSortowanie.add(comboSortowanie);
+        panelPrawy.add(panelSortowanie);
+
+        //wyszukiwanie
+        JPanel panelWyszukiwania = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelWyszukiwania.setBackground(Color.WHITE);
+
+        kolumnaFiltrowanie = new JComboBox<>(kolumny);
+        panelWyszukiwania.add(new JLabel("Szukaj po:"));
+        panelWyszukiwania.add(kolumnaFiltrowanie);
+        poleWyszukiwania = new JTextField(15);
+        panelWyszukiwania.add(poleWyszukiwania);
+
         poleWyszukiwania.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filtrujTabele();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filtrujTabele();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filtrujTabele();
-            }
+            public void insertUpdate(DocumentEvent e) { filtrujTabele(); }
+            public void removeUpdate(DocumentEvent e) { filtrujTabele(); }
+            public void changedUpdate(DocumentEvent e) { filtrujTabele(); }
         });
-        panelGorny.add(new JLabel("Filtrowanie:"));
-        panelGorny.add(Box.createHorizontalStrut(20)); //odstęp
-        panelGorny.add(new JLabel("Szukaj po:"));
-        panelGorny.add(kolumnaFiltrowanie);
-        panelGorny.add(poleWyszukiwania);
+
+        panelPrawy.add(panelWyszukiwania);
+
+        //scalenie wszystkiego w 1
+        panelGorny.add(panelLewy, BorderLayout.WEST);
+        panelGorny.add(panelPrawy, BorderLayout.EAST);
 
         panelGlowny.add(panelGorny, BorderLayout.NORTH);
     }
+
     private void panelSrodkowy() {
         panelSrodkowy = new JPanel(new GridLayout(1,7,15,0));
         panelSrodkowy.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -119,7 +149,7 @@ public class PomieszczeniaGui extends JFrame {
         sortowanie = new TableRowSorter<>(model);
         tabela.setRowSorter(sortowanie);
 
-        //Opcja scrollowania
+        //opcja scrollowania
         JScrollPane scrollPane = new JScrollPane(tabela);
         panelSrodkowy.add(scrollPane,BorderLayout.CENTER);
 
@@ -337,7 +367,7 @@ public class PomieszczeniaGui extends JFrame {
                 int nowaCenaCzynszu = Integer.parseInt(tekstCenaCzynszu);
                 Integer nowaCenaZakupu = tekstCenaZakupu.isEmpty() ? null : Integer.parseInt(tekstCenaZakupu);
 
-                // Aktualizacja w modelu tabeli
+                //aktualizacja w modelu tabeli
                 model.setValueAt(nowyIdBudynek, wybranyWiersz, 1);
                 model.setValueAt(nowyTyp, wybranyWiersz, 2);
                 model.setValueAt(noweCzyZajete, wybranyWiersz, 3);

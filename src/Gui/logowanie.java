@@ -3,28 +3,33 @@ package Gui;
 import Gui.AdminGui.PanelAdministratora;
 import Gui.UserGui.PanelUzytkownika;
 import dao.DatabaseConnection;
-import dao.WeryfikacjaDAO;
+import dao.UzytkownikDAO.WeryfikacjaDAO;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class logowanie extends JFrame {
     private JPanel zarzadzanieUzytkownikiem;
     private JPasswordField PassTextField;
     private JTextField LoginTextField;
-    private JLabel LoginJLabel;
-    private JLabel PassJLabel;
     private JButton zalogujButton;
-    private JButton rejestracjaButton;
-    private JPanel SystemLogowania;
+    private JButton niePamiętamHaslaButton;
     String login, password;
+    private Connection connection;
 
 
 public logowanie() {
     super("Logowanie");
     this.setContentPane(this.zarzadzanieUzytkownikiem);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icons/icons8-home-64.png"));
+    setIconImage(icon);
+
     int width = 400, height = 300;
     this.setSize(width, height);
     this.setVisible(true);
@@ -34,6 +39,16 @@ public logowanie() {
     zalogujButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            try {
+                connection = DatabaseConnection.getConnection();
+                if (connection == null) {
+                    JOptionPane.showMessageDialog(null, "Brak połączenia z bazą danych!", "Błąd", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Błąd:" + ex.getMessage());
+            }
+
             //sprawdzenie czy pole nie jest puste
             if (LoginTextField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
@@ -58,20 +73,29 @@ public logowanie() {
                     if ("admin".equalsIgnoreCase(rola)) {
                         new PanelAdministratora();
                     } else if ("user".equalsIgnoreCase(rola)) {
-                        new PanelUzytkownika();
+                        int idUzytkownika = weryfikacjaDAO.pobierzIdUzytkownika(login);
+                        new PanelUzytkownika(idUzytkownika, connection);
                     } else {
                         JOptionPane.showMessageDialog(null, "Błędny login lub hasło!");
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null,"Podano błędne dane","Błąd",JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null,
                         "Wystąpił błąd podczas logowania:" + ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
             } finally {
-                // Czyszczenie wrażliwych danych
+                //czyszczenie wrażliwych danych
                 password = null;
                 PassTextField.setText("");
 
             }
+        }
+    });
+    niePamiętamHaslaButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "Skontaktuj się z administratorem aby odzyskać hasło.","Informacja",JOptionPane.INFORMATION_MESSAGE);
         }
     });
 }

@@ -19,7 +19,6 @@ public class TworzeniePrzyciskowGui {
             }
         });
         return przycisk;
-
     }
 
     public JButton tworzeniePrzyciskuZeZdjeciem(String text, Color color, Color foreground, String icon) {
@@ -28,7 +27,6 @@ public class TworzeniePrzyciskowGui {
         przycisk.setHorizontalTextPosition(SwingConstants.CENTER);
         przycisk.setVerticalTextPosition(SwingConstants.BOTTOM);
         przycisk.setIconTextGap(5);
-
         return przycisk;
     }
 }
