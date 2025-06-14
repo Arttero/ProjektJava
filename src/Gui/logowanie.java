@@ -17,12 +17,16 @@ public class logowanie extends JFrame {
     private JPasswordField PassTextField;
     private JTextField LoginTextField;
     private JButton zalogujButton;
-    private JButton niePamiętamHaslaButton;
+    private JLabel LoginJLabel;
+    private JLabel PassJLabel;
+    private JButton niePamietamHaslaButton;
     String login, password;
     private Connection connection;
+    private JPanel SystemLogowania;
 
 
-public logowanie() {
+
+    public logowanie() {
     super("Logowanie");
     this.setContentPane(this.zarzadzanieUzytkownikiem);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,7 +96,7 @@ public logowanie() {
             }
         }
     });
-    niePamiętamHaslaButton.addActionListener(new ActionListener() {
+    niePamietamHaslaButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, "Skontaktuj się z administratorem aby odzyskać hasło.","Informacja",JOptionPane.INFORMATION_MESSAGE);
